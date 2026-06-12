@@ -86,7 +86,7 @@ const loginUser = async (req, res) => {
         message: "Invalid credentials",
       });
     }
-
+    
     const token = jwt.sign(
         {
             userId: user.id,
@@ -117,7 +117,32 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getCurrentUser = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, email FROM users WHERE id = $1",
+      [req.user.userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json(result.rows[0]);
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  getCurrentUser
 };
