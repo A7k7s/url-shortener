@@ -2,11 +2,32 @@ const pool = require("../config/db");
 
 const createShortUrl = async (req, res) => {
   try {
-    const { originalUrl } = req.body;
+    const { originalUrl, customAlias } = req.body;
 
-    const shortCode = Math.random()
-      .toString(36)
-      .substring(2, 8);
+    let shortCode;
+
+    if (customAlias) {
+
+        const existingAlias = await pool.query(
+            `
+            SELECT *
+            FROM urls
+            WHERE short_code = $1
+            `,
+            [customAlias]
+        );
+
+        if (existingAlias.rows.length > 0) {
+            return res.status(400).json({
+            message: "Alias already exists",
+            });
+        }
+        shortCode = customAlias;
+    } else {
+        shortCode = Math.random()
+        .toString(36)
+        .substring(2, 8);
+    }
 
     const userId = req.user.userId;
 
@@ -16,12 +37,13 @@ const createShortUrl = async (req, res) => {
       (
         original_url,
         short_code,
+        custom_alias,
         user_id
       )
-      VALUES ($1, $2, $3)
+      VALUES ($1, $2, $3, $4)
       RETURNING *
       `,
-      [originalUrl, shortCode, userId]
+      [originalUrl,shortCode,customAlias || null,userId]
     );
 
     res.status(201).json({
