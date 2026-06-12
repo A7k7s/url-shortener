@@ -6,6 +6,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const {
   createShortUrl,
   getUserUrls,
+  deleteUrl,
 } = require("../controllers/urlController");
 
 router.post(
@@ -18,5 +19,9 @@ router.get(
   authMiddleware,
   getUserUrls
 );
-
+router.delete(
+  "/:id",
+  authMiddleware,
+  deleteUrl
+);
 module.exports = router;
