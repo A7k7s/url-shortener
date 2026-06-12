@@ -3,7 +3,7 @@ const pool = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
 const urlRoutes = require("./routes/urlRoutes");
-
+const { redirectUrl } = require("./controllers/urlController");
 const app = express();
 
 app.use(express.json());
@@ -31,7 +31,7 @@ app.get("/test-db", async (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/urls", urlRoutes);
-
+app.get("/:shortCode", redirectUrl);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

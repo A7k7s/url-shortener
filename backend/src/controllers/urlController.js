@@ -125,8 +125,53 @@ const deleteUrl = async (req, res) => {
   }
 };
 
+const redirectUrl = async (req, res) => {
+  try {
+
+    const shortCode = req.params.shortCode;
+
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM urls
+      WHERE short_code = $1
+      `,
+      [shortCode]
+    );
+
+    if (result.rows.length === 0) {
+        return res.status(404).json({
+            message: "URL not found",
+        });
+    }
+
+    await pool.query(
+        `
+        UPDATE urls
+        SET clicks = clicks + 1
+        WHERE id = $1
+        `,
+        [result.rows[0].id]
+    );
+
+    res.redirect(
+        result.rows[0].original_url
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+
+  }
+};
+
 module.exports = {
   createShortUrl,
   getUserUrls,
     deleteUrl,
+    redirectUrl,
 };
