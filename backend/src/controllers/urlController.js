@@ -94,6 +94,14 @@ const deleteUrl = async (req, res) => {
     const urlId = req.params.id;
     const userId = req.user.userId;
 
+    await pool.query(
+      `
+      DELETE FROM visits
+      WHERE url_id = $1
+      `,
+      [urlId]
+    );
+
     const result = await pool.query(
       `
       DELETE FROM urls

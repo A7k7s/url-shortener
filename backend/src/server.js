@@ -1,11 +1,12 @@
 const express = require("express");
 const pool = require("./config/db");
+const cors = require("cors");
 
 const authRoutes = require("./routes/authRoutes");
 const urlRoutes = require("./routes/urlRoutes");
 const { redirectUrl } = require("./controllers/urlController");
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
