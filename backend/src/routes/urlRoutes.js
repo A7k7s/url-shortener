@@ -7,6 +7,8 @@ const {
   createShortUrl,
   getUserUrls,
   deleteUrl,
+  getUrlAnalytics,
+  generateQrCode
 } = require("../controllers/urlController");
 
 router.post(
@@ -23,5 +25,15 @@ router.delete(
   "/:id",
   authMiddleware,
   deleteUrl
+);
+router.post(
+  "/:id/generate-qr",
+  authMiddleware,
+  generateQrCode
+);
+router.get(
+  "/:id/analytics",
+  authMiddleware,
+  getUrlAnalytics
 );
 module.exports = router;

@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-
+const QRCode = require("qrcode");
 const createShortUrl = async (req, res) => {
   try {
     const { originalUrl, customAlias } = req.body;
@@ -144,7 +144,13 @@ const redirectUrl = async (req, res) => {
             message: "URL not found",
         });
     }
-
+    await pool.query(
+      `
+      INSERT INTO visits (url_id)
+      VALUES ($1)
+      `,
+      [result.rows[0].id]
+    );
     await pool.query(
         `
         UPDATE urls
@@ -169,9 +175,115 @@ const redirectUrl = async (req, res) => {
   }
 };
 
+const getUrlAnalytics = async (req, res) => {
+  try {
+
+    const urlId = req.params.id;
+    const userId = req.user.userId;
+
+    const urlResult = await pool.query(
+      `
+      SELECT *
+      FROM urls
+      WHERE id = $1
+      AND user_id = $2
+      `,
+      [urlId, userId]
+    );
+
+    if (urlResult.rows.length === 0) {
+      return res.status(404).json({
+        message: "URL not found"
+      });
+    }
+
+    const visitsResult = await pool.query(
+      `
+      SELECT *
+      FROM visits
+      WHERE url_id = $1
+      ORDER BY visited_at DESC
+      `,
+      [urlId]
+    );
+
+    res.json({
+      url: urlResult.rows[0],
+      totalVisits: visitsResult.rows.length,
+      visits: visitsResult.rows
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+};
+
+const generateQrCode = async (req, res) => {
+  try {
+
+    const urlId = req.params.id;
+    const userId = req.user.userId;
+
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM urls
+      WHERE id = $1
+      AND user_id = $2
+      `,
+      [urlId, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "URL not found or access denied",
+      });
+    }
+
+    const shortCode = result.rows[0].short_code;
+
+    const shortUrl =
+      `http://localhost:5000/${shortCode}`;
+
+    const qrCodeUrl =
+      await QRCode.toDataURL(shortUrl);
+
+    await pool.query(
+      `
+      UPDATE urls
+      SET qr_code_url = $1
+      WHERE id = $2
+      `,
+      [qrCodeUrl, urlId]
+    );
+
+    res.json({
+      message: "QR Code generated",
+      qrCodeUrl,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+
+  }
+};
+
 module.exports = {
   createShortUrl,
   getUserUrls,
-    deleteUrl,
-    redirectUrl,
+  deleteUrl,
+  redirectUrl,
+  generateQrCode,
+  getUrlAnalytics,
 };
