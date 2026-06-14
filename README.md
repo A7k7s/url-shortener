@@ -231,7 +231,9 @@ http://localhost:5173
 
 ## Architecture Diagram
 
+```text
 docs/Architecture_diagram.png
+```
 ---
 
 ## Documentation
