@@ -231,9 +231,7 @@ http://localhost:5173
 
 ## Architecture Diagram
 
-```text
 docs/Architecture_diagram.png
-```
 ---
 
 ## Documentation
@@ -261,9 +259,7 @@ outputs/
 
 ## Demo Video
 
-```text
 https://www.loom.com/share/3149fa0fc61f4e44ae46967f22a382da
-```
 
 ---
 
