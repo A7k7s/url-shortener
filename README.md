@@ -234,11 +234,6 @@ http://localhost:5173
 ```text
 docs/Architecture_diagram.png
 ```
-
-```markdown
-![Architecture Diagram](docs/Architecture_diagram.png)
-```
-
 ---
 
 ## Documentation
@@ -262,31 +257,12 @@ outputs/
 └── QR-generation.png
 ```
 
-Example:
-
-```markdown
-### Login Page
-![Login](outputs/Login page.png)
-
-### Register Page
-![Register](outputs/Register page.png)
-
-### Dashboard
-![Dashboard](outputs/Dashboard page.png)
-
-### Analytics
-![Analytics](outputs/Analytics page.png)
-
-### QR Code Generation
-![QR Code](outputs/QR-generation.png)
-```
-
 ---
 
 ## Demo Video
 
 ```text
-[https://your-video-link-here](https://www.loom.com/share/3149fa0fc61f4e44ae46967f22a382da)
+https://www.loom.com/share/3149fa0fc61f4e44ae46967f22a382da
 ```
 
 ---
@@ -294,7 +270,7 @@ Example:
 ## Author
 
 Akshayaa Panneerselvam
-github.com/A7k7s
+https://github.com/A7k7s
 
 ---
 
